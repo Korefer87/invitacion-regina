@@ -33,7 +33,7 @@ export const EVENTO = {
 
   // Número de WhatsApp que recibe las confirmaciones, con lada de país y sin espacios.
   // Ejemplo: '5213312345678'. Si se deja vacío, WhatsApp pedirá elegir el contacto.
-  whatsapp: '',
+  whatsapp: '523330132720',
 
   // Imagen que aparece al compartir el enlace (WhatsApp, redes)
   imagenCompartir: '/og.jpg',

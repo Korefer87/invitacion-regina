@@ -1,12 +1,159 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Parisienne&family=Lato:wght@400;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Lato", ui-sans-serif, system-ui, sans-serif;
+  --font-cinzel: "Cinzel", Georgia, serif;
+  --font-script: "Parisienne", cursive;
+
+  --color-fondo: #F4F9FD;
+  --color-arco: #B9DAF2;
+  --color-perla: #8FBCE0;
+  --color-borde: #D3E6F5;
+  --color-acento: #3E6E95;
+  --color-tinta: #24384F;
+  --color-tinta-fuerte: #1E3550;
+  --color-tinta-media: #3A4F66;
+  --color-tinta-suave: #4A5E74;
+  --color-rosa: #F8DFE6;
+  --color-rosa-borde: #EEC6D2;
+  --color-rosa-tinta: #A2566E;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
 }
 
 body {
-  font-family: var(--font-sans);
-  background-color: #f9fafb;
-  color: #111827;
+  margin: 0;
+  background: var(--color-fondo);
+  color: var(--color-tinta);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Damasco muy sutil de fondo */
+.bg-damasco {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='56' viewBox='0 0 56 56' fill='none' stroke='%238FBCE0' stroke-opacity='0.22' stroke-width='0.8'%3E%3Cpath d='M28 6 C22 14 22 20 28 26 C34 20 34 14 28 6 Z'/%3E%3Cpath d='M28 26 C20 24 14 28 12 34 M28 26 C36 24 42 28 44 34'/%3E%3Ccircle cx='28' cy='30' r='1.2' fill='%238FBCE0' fill-opacity='0.3' stroke='none'/%3E%3Ccircle cx='0' cy='0' r='1' fill='%238FBCE0' fill-opacity='0.3' stroke='none'/%3E%3Ccircle cx='56' cy='56' r='1' fill='%238FBCE0' fill-opacity='0.3' stroke='none'/%3E%3C/svg%3E");
+  background-size: 56px 56px;
+}
+
+/* Destellos, reflejo del arco y sobre */
+@keyframes xv-destello {
+  0%, 100% { opacity: 0.15; transform: scale(0.5) rotate(0deg); }
+  50%      { opacity: 1; transform: scale(1) rotate(45deg); }
+}
+@keyframes xv-reflejo {
+  0%, 55% { transform: translateX(-120%) skewX(-18deg); }
+  100%    { transform: translateX(420%) skewX(-18deg); }
+}
+@keyframes xv-latido {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(62, 110, 149, 0.35); }
+  50%      { box-shadow: 0 0 0 10px rgba(62, 110, 149, 0); }
+}
+/* ===== Apertura del sobre (secuencia de ~2.9 s) ===== */
+@keyframes xv-intro-fuera { to { opacity: 0; transform: translateY(-8px); } }
+@keyframes xv-sello-romper {
+  0%   { transform: scale(1) rotate(0); opacity: 1; }
+  35%  { transform: scale(1.35) rotate(-8deg); opacity: 1; filter: brightness(1.3); }
+  100% { transform: scale(0) rotate(35deg); opacity: 0; }
+}
+@keyframes xv-estallido {
+  0%   { transform: translate(0, 0) scale(0) rotate(0); opacity: 1; }
+  60%  { transform: translate(var(--dx), var(--dy)) scale(1.2) rotate(120deg); opacity: 1; }
+  100% { transform: translate(calc(var(--dx) * 1.25), calc(var(--dy) * 1.25 + 30px)) scale(0.2) rotate(200deg); opacity: 0; }
+}
+@keyframes xv-solapa-abrir {
+  0%   { transform: rotateX(0); }
+  100% { transform: rotateX(180deg); }
+}
+@keyframes xv-carta-salir {
+  0%   { transform: translateY(0) scale(1); z-index: 0; }
+  45%  { transform: translateY(-62%) scale(1); z-index: 25; }
+  55%  { transform: translateY(-58%) scale(1.06); z-index: 25; opacity: 1; }
+  82%  { opacity: 1; }
+  100% { transform: translateY(-20%) scale(7); z-index: 25; opacity: 0; }
+}
+@keyframes xv-sobre-caer {
+  to { transform: translateY(70vh) rotate(8deg); opacity: 0; }
+}
+@keyframes xv-luz {
+  0%   { opacity: 0; }
+  60%  { opacity: 1; }
+  100% { opacity: 0.9; }
+}
+@keyframes xv-velo { to { opacity: 0; } }
+
+.xv-chispa-estallido { opacity: 0; }
+.xv-abriendo { animation: xv-velo 0.75s ease 2.15s forwards; }
+.xv-abriendo .xv-intro-texto { animation: xv-intro-fuera 0.3s ease forwards; }
+.xv-abriendo .xv-sello { animation: xv-sello-romper 0.5s cubic-bezier(0.5, 0, 0.75, 0) forwards; pointer-events: none; }
+.xv-abriendo .xv-chispa-estallido { animation: xv-estallido 0.9s cubic-bezier(0.2, 0.7, 0.3, 1) forwards; }
+.xv-abriendo .xv-solapa { animation: xv-solapa-abrir 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards; }
+.xv-abriendo .xv-carta { animation: xv-carta-salir 1.65s cubic-bezier(0.45, 0, 0.2, 1) 0.85s forwards; }
+.xv-abriendo .xv-sobre-parte { animation: xv-sobre-caer 0.7s cubic-bezier(0.5, 0, 0.9, 0.4) 1.55s forwards; }
+.xv-abriendo .xv-luz { animation: xv-luz 0.7s ease 1.75s forwards; }
+
+/* ===== Entrada de la invitación ===== */
+@keyframes xv-subir {
+  from { opacity: 0; transform: translateY(36px); filter: blur(6px); }
+  to   { opacity: 1; transform: none; filter: none; }
+}
+@keyframes xv-ventana-entrar {
+  0%   { opacity: 0; transform: scale(0.55) translateY(40px); filter: blur(12px) brightness(1.6); }
+  60%  { opacity: 1; transform: scale(1.04); filter: blur(0) brightness(1.15); }
+  100% { opacity: 1; transform: none; filter: none; }
+}
+@keyframes xv-header-bajar {
+  from { transform: translateY(-110%); }
+  to   { transform: none; }
+}
+@keyframes xv-caer {
+  0%   { transform: translate(0, -10vh) rotate(0); opacity: 0; }
+  6%   { opacity: 1; }
+  25%  { transform: translate(18px, 22vh) rotate(130deg); }
+  50%  { transform: translate(-16px, 52vh) rotate(270deg); }
+  75%  { transform: translate(14px, 82vh) rotate(400deg); opacity: 1; }
+  100% { transform: translate(0, 115vh) rotate(540deg); opacity: 0.6; }
+}
+
+.xv-oculto .xv-escena > *, .xv-oculto .xv-header { opacity: 0; }
+.xv-revelado .xv-escena > * { animation: xv-subir 0.9s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.xv-revelado .xv-escena > :nth-child(1) { animation-delay: 0s; }
+.xv-revelado .xv-escena > :nth-child(2) { animation-delay: 0.35s; }
+.xv-revelado .xv-escena > :nth-child(3) { animation-delay: 0.45s; }
+.xv-revelado .xv-escena > :nth-child(4) { animation-delay: 0.55s; }
+.xv-revelado .xv-escena > :nth-child(n+5) { animation-delay: 0.65s; }
+.xv-revelado .xv-ventana { animation: xv-ventana-entrar 1.4s cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.xv-revelado .xv-header { animation: xv-header-bajar 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.1) 0.5s both; }
+.xv-caer { animation: xv-caer 3.5s linear both; }
+
+@keyframes xv-chispa {
+  0%, 100% { opacity: 0.2; }
+  50%      { opacity: 1; }
+}
+.xv-chispa { animation: xv-chispa 2.2s ease-in-out infinite; }
+@keyframes xv-nav-entrar {
+  from { transform: translateY(120%); }
+  to   { transform: none; }
+}
+.xv-nav-entrar { animation: xv-nav-entrar 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.2) 0.4s both; }
+.xv-destello { filter: drop-shadow(0 0 4px rgba(143, 188, 224, 0.9)); animation: xv-destello 2.6s ease-in-out infinite; }
+.xv-reflejo  { animation: xv-reflejo 6s ease-in-out infinite; }
+.xv-latido   { animation: xv-latido 2.2s ease-out infinite; }
+
+/* Brillo de la corona */
+@keyframes xv-brillo {
+  0%, 100% { filter: drop-shadow(0 0 0 rgba(255, 255, 255, 0)); }
+  50%      { filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.9)); }
+}
+
+.xv-brillo   { animation: xv-brillo 3s ease-in-out infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .xv-brillo, .xv-destello, .xv-chispa, .xv-nav-entrar, .xv-reflejo, .xv-latido, .xv-caer,
+  .xv-revelado .xv-escena > *, .xv-revelado .xv-ventana, .xv-revelado .xv-header { animation: none; }
+  .xv-destello { opacity: 0.8; }
 }

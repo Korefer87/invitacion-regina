@@ -1,20 +1,18 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# XV Años de Gloria
 
-# Run and deploy your AI Studio app
+Invitación digital para los XV años de Gloria Regina Ramos Fernández (22 de mayo de 2027, Casa Amada, Tepatitlán).
 
-This contains everything you need to run your app locally.
+## Correr en local
 
-View your app in AI Studio: https://ai.studio/apps/43b5eb3c-e15a-4608-b678-83462e50e74e
+```bash
+npm install
+npm run dev     # http://localhost:3000
+npm run build   # genera /dist para publicar
+```
 
-## Run Locally
+## Editar la información
 
-**Prerequisites:**  Node.js
+Todo el contenido está en [`src/config.ts`](src/config.ts):
 
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+- `whatsapp`: número que recibe las confirmaciones (con lada, ej. `5213312345678`).
+- `misa.lugar` / `misa.mapa`: nombre y enlace de la parroquia.

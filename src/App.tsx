@@ -92,8 +92,127 @@ const Tiara = ({ className = '', color = 'currentColor' }: { className?: string;
 );
 
 /* Separador de filigrana simétrico */
+
+/* ---------- Flores: rosas, hojas, flores pequeñas y botones ---------- */
+
+const TONOS_ROSA = {
+  azul: { base: '#9CCBF0', medio: '#7DB4E4', oscuro: '#5E97CC' },
+  rosa: { base: '#F7C6D3', medio: '#EFA3B8', oscuro: '#D9809A' },
+  blanco: { base: '#FFFFFF', medio: '#EEF4FA', oscuro: '#BFD3E6' },
+} as const;
+type Tono = keyof typeof TONOS_ROSA;
+
+type Pieza =
+  | ['rosa', number, number, number, Tono]
+  | ['hoja', number, number, number, number]
+  | ['flor', number, number, number, string]
+  | ['boton', number, number, number, Tono]
+  | ['tallo', string];
+
+function Rosa({ x, y, s, tono }: { x: number; y: number; s: number; tono: Tono; key?: React.Key }) {
+  const t = TONOS_ROSA[tono];
+  return (
+    <g transform={`translate(${x} ${y}) scale(${s})`}>
+      <circle r="10" fill={t.base} stroke={t.oscuro} strokeOpacity="0.35" strokeWidth="0.6" />
+      <path d="M-9 2 C-10 -6 -3 -10 3 -9 C9 -8 11 -1 8 4" stroke={t.oscuro} strokeWidth="0.9" fill="none" opacity="0.6" />
+      <path d="M-6 4 C-8 -3 -2 -7 3 -6 C7 -5 8 0 5 3 C2 6 -3 7 -6 4 Z" fill={t.medio} />
+      <path d="M-3 2 C-4 -2 0 -4 3 -3 C5 -2 5 1 3 2 C1 3 -1 2 -1 0" stroke={t.oscuro} strokeWidth="1" fill="none" strokeLinecap="round" />
+      <path d="M-8 5 C-4 10 4 10 8 5" stroke={t.oscuro} strokeWidth="0.7" fill="none" opacity="0.5" />
+      <circle cx="-3.5" cy="-5" r="2.6" fill="#FFFFFF" opacity="0.4" />
+    </g>
+  );
+}
+
+function Ramo({ piezas, transform }: { piezas: Pieza[]; transform?: string }) {
+  return (
+    <g transform={transform} aria-hidden="true">
+      {piezas.map((p, i) => {
+        switch (p[0]) {
+          case 'tallo':
+            return <path key={i} d={p[1]} stroke="#8DB596" strokeWidth="1.2" fill="none" strokeLinecap="round" />;
+          case 'hoja': {
+            const [, x, y, s, rot] = p;
+            return (
+              <g key={i} transform={`translate(${x} ${y}) rotate(${rot}) scale(${s})`}>
+                <path d="M0 0 C5 -6 14 -5 18 0 C14 5 5 6 0 0 Z" fill="#8DB596" />
+                <path d="M1 0 C6 -1 12 -1 16 0" stroke="#6E9A79" strokeWidth="0.6" fill="none" />
+              </g>
+            );
+          }
+          case 'rosa':
+            return <Rosa key={i} x={p[1]} y={p[2]} s={p[3]} tono={p[4]} />;
+          case 'flor': {
+            const [, x, y, r, color] = p;
+            return (
+              <g key={i}>
+                {[0, 72, 144, 216, 288].map((a) => (
+                  <circle key={a} cx={x + Math.cos((a * Math.PI) / 180) * r} cy={y + Math.sin((a * Math.PI) / 180) * r} r={r * 0.8} fill={color} stroke="#BFD3E6" strokeWidth="0.3" />
+                ))}
+                <circle cx={x} cy={y} r={r * 0.55} fill="#F5D98B" />
+              </g>
+            );
+          }
+          case 'boton': {
+            const [, x, y, s, tono] = p;
+            return (
+              <g key={i} transform={`translate(${x} ${y}) scale(${s})`}>
+                <path d="M0 4 C-3 1 -3 -4 0 -6 C3 -4 3 1 0 4 Z" fill={TONOS_ROSA[tono].medio} />
+                <path d="M0 4 C-2 3 -4 4 -4 6 M0 4 C2 3 4 4 4 6" stroke="#8DB596" strokeWidth="1" fill="none" />
+              </g>
+            );
+          }
+        }
+      })}
+    </g>
+  );
+}
+
+// Guirnalda de la esquina superior izquierda del arco, con enredadera por la pilastra (lienzo 340×480)
+const RAMO_ESQUINA: Pieza[] = [
+  ['tallo', 'M14 178 C6 218 22 248 12 288 C6 318 18 340 12 372'],
+  ['hoja', 12, 200, 0.6, 150], ['hoja', 16, 232, 0.6, 30], ['hoja', 10, 264, 0.6, 160], ['hoja', 16, 302, 0.55, 20], ['hoja', 12, 342, 0.55, 170],
+  ['flor', 14, 216, 1.9, '#FFFFFF'], ['flor', 12, 250, 1.7, '#F7C6D3'], ['flor', 15, 284, 1.7, '#FFFFFF'], ['flor', 11, 324, 1.5, '#B9DAF2'], ['flor', 13, 362, 1.5, '#FFFFFF'],
+  ['hoja', 6, 152, 1.15, 200], ['hoja', 30, 126, 1, -60], ['hoja', 46, 152, 0.95, 20], ['hoja', 12, 178, 1, 110], ['hoja', 54, 126, 0.85, -20], ['hoja', -2, 128, 0.9, -140],
+  ['rosa', 22, 148, 1.35, 'azul'], ['rosa', 45, 133, 1, 'rosa'], ['rosa', 7, 168, 0.95, 'blanco'], ['rosa', 38, 162, 0.75, 'blanco'], ['rosa', 5, 134, 0.72, 'rosa'],
+  ['flor', 58, 142, 2.3, '#FFFFFF'], ['flor', 29, 176, 2, '#F7C6D3'], ['flor', 60, 118, 1.9, '#FFFFFF'],
+  ['boton', 64, 132, 0.9, 'rosa'], ['boton', 18, 122, 0.9, 'azul'],
+];
+
+// Arreglo floral en la base de la puerta
+const RAMO_BASE: Pieza[] = [
+  ['hoja', -2, 456, 1, -160], ['hoja', 50, 458, 0.9, -20], ['hoja', 24, 440, 0.95, -95], ['hoja', 40, 444, 0.8, -50],
+  ['rosa', 20, 458, 1.25, 'rosa'], ['rosa', 42, 467, 1, 'azul'], ['rosa', 5, 470, 0.95, 'blanco'], ['rosa', 32, 445, 0.8, 'blanco'],
+  ['flor', 54, 472, 2.1, '#FFFFFF'], ['flor', 12, 444, 1.9, '#F7C6D3'], ['boton', 48, 440, 0.9, 'azul'],
+];
+
+// Ramo sobre la clave del arco
+const RAMO_CLAVE: Pieza[] = [
+  ['hoja', 140, 14, 0.85, 170], ['hoja', 200, 14, 0.85, 10], ['hoja', 158, -2, 0.7, -120], ['hoja', 182, -2, 0.7, -60],
+  ['rosa', 150, 12, 0.8, 'rosa'], ['rosa', 190, 12, 0.8, 'azul'], ['rosa', 170, -4, 0.85, 'blanco'],
+  ['flor', 140, 2, 1.6, '#FFFFFF'], ['flor', 200, 2, 1.6, '#FFFFFF'],
+];
+
+// Ramito para la punta de las tarjetas (lienzo 200×76)
+const RAMO_TARJETA: Pieza[] = [
+  ['hoja', 84, 8, 0.55, 170], ['hoja', 116, 8, 0.55, 10],
+  ['rosa', 91, 8, 0.42, 'azul'], ['rosa', 109, 8, 0.42, 'blanco'], ['rosa', 100, 4, 0.56, 'rosa'],
+];
+
+// Ramito para el centro de los separadores (lienzo 220×24)
+const RAMO_SEPARADOR: Pieza[] = [
+  ['hoja', 96, 13, 0.5, 175], ['hoja', 124, 13, 0.5, 5],
+  ['rosa', 102, 14, 0.42, 'azul'], ['rosa', 118, 14, 0.42, 'azul'], ['rosa', 110, 11, 0.6, 'rosa'],
+];
+
+// Esquina del sobre (lienzo 80×80)
+const RAMO_SOBRE: Pieza[] = [
+  ['hoja', 6, 30, 1, 100], ['hoja', 28, 6, 1, -10], ['hoja', 30, 26, 0.8, 40],
+  ['rosa', 14, 14, 1.3, 'rosa'], ['rosa', 34, 16, 0.9, 'blanco'], ['rosa', 14, 36, 0.9, 'azul'],
+  ['flor', 44, 6, 2, '#FFFFFF'], ['flor', 6, 46, 1.9, '#FFFFFF'], ['boton', 40, 30, 0.9, 'rosa'],
+];
+
 const Filigrana = ({ className = '' }: { className?: string }) => (
-  <svg className={`mx-auto h-6 w-[220px] max-w-full text-perla ${className}`} viewBox="0 0 220 24" fill="none" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" aria-hidden="true">
+  <svg className={`mx-auto h-6 w-[220px] max-w-full overflow-visible text-perla ${className}`} viewBox="0 0 220 24" fill="none" stroke="currentColor" strokeWidth="1.1" strokeLinecap="round" aria-hidden="true">
     <g id="fil-izq">
       <path d="M100 12 C92 12 88 18 82 16 C77 14 79 8 84 9 C88 10 87 14 84 14" />
       <path d="M82 16 C68 22 52 4 36 12 C30 15 22 12 14 12" />
@@ -101,8 +220,9 @@ const Filigrana = ({ className = '' }: { className?: string }) => (
       <circle cx="10" cy="12" r="1.6" fill="currentColor" stroke="none" />
     </g>
     <use href="#fil-izq" transform="matrix(-1 0 0 1 220 0)" />
-    <path d="M110 5 L116 12 L110 19 L104 12 Z" />
-    <circle cx="110" cy="12" r="1.6" fill="currentColor" stroke="none" />
+    <g stroke="none">
+      <Ramo piezas={RAMO_SEPARADOR} transform="translate(110 12) scale(1.7) translate(-110 -12)" />
+    </g>
   </svg>
 );
 
@@ -338,6 +458,14 @@ function Sobre({ revelar, abrir }: { revelar: () => void; abrir: () => void }) {
         <div className="xv-sobre-parte absolute inset-0 rounded-md bg-arco [clip-path:polygon(0_0,50%_54%,100%_0,100%_100%,0_100%)]" />
         <div className="xv-sobre-parte absolute inset-0 rounded-md bg-perla/35 [clip-path:polygon(0_100%,50%_54%,100%_100%)]" />
 
+        {/* Flores en las esquinas del sobre */}
+        <svg className="xv-sobre-parte pointer-events-none absolute -left-8 -top-8 z-[15] h-32 w-32 overflow-visible" viewBox="0 0 80 80" aria-hidden="true">
+          <Ramo piezas={RAMO_SOBRE} />
+        </svg>
+        <svg className="xv-sobre-parte pointer-events-none absolute -bottom-8 -right-8 z-[15] h-32 w-32 rotate-180 overflow-visible" viewBox="0 0 80 80" aria-hidden="true">
+          <Ramo piezas={RAMO_SOBRE} />
+        </svg>
+
         {/* Solapa */}
         <div className="xv-solapa absolute inset-x-0 top-0 z-10 h-[62%] origin-top rounded-t-md bg-[#A9CFEC] [backface-visibility:hidden] [clip-path:polygon(0_0,100%_0,50%_100%)]" />
 
@@ -529,6 +657,13 @@ function Portada() {
               <path d="M6 42 C8 30 14 24 19 28 C21 20 27 15 31 19 C33 10 37 5 40 3 C43 5 47 10 49 19 C53 15 59 20 61 28 C66 24 72 30 74 42 Z" />
             </g>
           </g>
+
+          {/* Guirnaldas, enredaderas y arreglos de flores */}
+          <Ramo piezas={RAMO_ESQUINA} />
+          <Ramo piezas={RAMO_ESQUINA} transform="matrix(-1 0 0 1 340 0)" />
+          <Ramo piezas={RAMO_BASE} />
+          <Ramo piezas={RAMO_BASE} transform="matrix(-1 0 0 1 340 0)" />
+          <Ramo piezas={RAMO_CLAVE} />
         </svg>
       </div>
       <div className="flex flex-col items-center gap-2 text-center">
@@ -559,7 +694,13 @@ function Fecha() {
         <p className="font-cinzel text-[13px] tracking-[0.3em] text-acento">SÁBADO</p>
         <p className="font-cinzel text-[clamp(32px,10vw,40px)] font-medium tracking-[0.06em]">22 · V · 2027</p>
       </div>
-      <div className="grid w-full grid-cols-4 rounded-lg border border-borde bg-white py-4 outline outline-1 outline-offset-4 outline-borde">
+      <div className="relative grid w-full grid-cols-4 rounded-lg border border-borde bg-white py-4 outline outline-1 outline-offset-4 outline-borde">
+        <svg className="pointer-events-none absolute -left-6 -top-6 h-16 w-16 overflow-visible" viewBox="0 0 80 80" aria-hidden="true">
+          <Ramo piezas={RAMO_SOBRE} />
+        </svg>
+        <svg className="pointer-events-none absolute -bottom-6 -right-6 h-16 w-16 rotate-180 overflow-visible" viewBox="0 0 80 80" aria-hidden="true">
+          <Ramo piezas={RAMO_SOBRE} />
+        </svg>
         {items.map(([valor, etiqueta], i) => (
           <div key={etiqueta} className={`flex flex-col gap-0.5 ${i > 0 ? 'border-l border-borde' : ''}`}>
             <span className="font-cinzel text-2xl font-medium tabular-nums">{String(valor).padStart(2, '0')}</span>
@@ -578,11 +719,11 @@ function TarjetaArco({ icono, titulo, hora, lugar, detalle, mapa }: {
     <div className="relative flex min-w-0 flex-col drop-shadow-[0_10px_14px_rgba(62,110,149,0.14)]">
       {/* Remate de ventana de palacio */}
       <div className="relative">
-        <svg className="block w-full" viewBox="0 0 200 76" aria-hidden="true">
+        <svg className="block w-full overflow-visible" viewBox="0 0 200 76" aria-hidden="true">
           <path d="M0 76 V50 C0 36 40 33 62 24 C82 16 95 10 100 1 C105 10 118 16 138 24 C160 33 200 36 200 50 V76 Z" fill="#FFFFFF" />
           <path d="M0.75 76 V50 C0.75 36 40 33 62 24 C82 16 95 10 100 1 C105 10 118 16 138 24 C160 33 199.25 36 199.25 50 V76" fill="none" stroke="#D3E6F5" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
           <path d="M9 76 V53 C9 42 44 40 66 31 C84 24 96 18 100 11 C104 18 116 24 134 31 C156 40 191 42 191 53 V76" fill="none" stroke="#B9DAF2" strokeOpacity="0.7" strokeWidth="1" vectorEffect="non-scaling-stroke" />
-          <circle cx="100" cy="2" r="2.5" fill="#8FBCE0" />
+          <Ramo piezas={RAMO_TARJETA} transform="translate(100 6) scale(1.8) translate(-100 -6)" />
         </svg>
         <span className="absolute inset-x-0 bottom-1 flex justify-center text-acento">{icono}</span>
       </div>

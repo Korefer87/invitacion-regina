@@ -13,6 +13,7 @@ export const EVENTO = {
     hora: '18:00',
     lugar: 'Templo',
     direccion: 'Calle Hidalgo 177, Col. Centro, Tepatitlán de Morelos, Jal.',
+    busqueda: 'Calle Hidalgo 177, Centro, 47600 Tepatitlán de Morelos, Jalisco, México',
     mapa: 'https://www.google.com/maps/search/?api=1&query=Calle+Hidalgo+177%2C+Centro%2C+47600+Tepatitl%C3%A1n+de+Morelos%2C+Jalisco%2C+M%C3%A9xico',
   },
 
@@ -20,6 +21,7 @@ export const EVENTO = {
     hora: '20:00',
     lugar: 'Casa Amada',
     direccion: 'Carretera Tepatitlán – Yahualica Km 1.9',
+    busqueda: 'Casa Amada, Carretera Tepatitlán - Yahualica Km 1.9, Jalisco',
     mapa: 'https://www.google.com/maps/search/?api=1&query=Casa+Amada+Carretera+Tepatitl%C3%A1n+Yahualica+Km+1.9',
   },
 

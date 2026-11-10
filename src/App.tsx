@@ -605,6 +605,55 @@ function TarjetaArco({ icono, titulo, hora, lugar, detalle, mapa }: {
   );
 }
 
+/* Mapa incrustado de Google Maps con las dos ubicaciones */
+const VISTAS_MAPA = [
+  { id: 'templo', etiqueta: 'Templo', src: `https://maps.google.com/maps?q=${encodeURIComponent(EVENTO.misa.busqueda)}&z=16&output=embed` },
+  { id: 'fiesta', etiqueta: 'Casa Amada', src: `https://maps.google.com/maps?q=${encodeURIComponent(EVENTO.fiesta.busqueda)}&z=15&output=embed` },
+  {
+    id: 'ruta',
+    etiqueta: 'Ruta',
+    src: `https://maps.google.com/maps?saddr=${encodeURIComponent(EVENTO.misa.busqueda)}&daddr=${encodeURIComponent(EVENTO.fiesta.busqueda)}&output=embed`,
+  },
+] as const;
+
+function Mapa() {
+  const [vista, setVista] = React.useState<(typeof VISTAS_MAPA)[number]['id']>('templo');
+  const actual = VISTAS_MAPA.find((v) => v.id === vista)!;
+  return (
+    <div className="flex flex-col gap-3 rounded-lg border border-borde bg-white p-3 shadow-[0_10px_30px_-18px_rgba(62,110,149,0.45)]">
+      <div className="grid grid-cols-3 gap-1 rounded-full bg-fondo p-1" role="tablist" aria-label="Ubicaciones en el mapa">
+        {VISTAS_MAPA.map((v) => (
+          <button
+            key={v.id}
+            role="tab"
+            aria-selected={vista === v.id}
+            onClick={() => setVista(v.id)}
+            className={`min-h-11 rounded-full font-cinzel text-xs tracking-[0.1em] transition-colors ${
+              vista === v.id ? 'bg-acento text-white' : 'text-tinta-media hover:text-tinta'
+            }`}
+          >
+            {v.etiqueta}
+          </button>
+        ))}
+      </div>
+      <div className="relative aspect-[4/3] overflow-hidden rounded-md bg-fondo">
+        <iframe
+          key={actual.id}
+          title={`Mapa: ${actual.etiqueta}`}
+          src={actual.src}
+          className="absolute inset-0 h-full w-full border-0"
+          loading="lazy"
+          referrerPolicy="no-referrer-when-downgrade"
+          allowFullScreen
+        />
+      </div>
+      <p className="text-center text-xs text-tinta-suave">
+        {vista === 'ruta' ? 'Del templo a Casa Amada' : vista === 'templo' ? EVENTO.misa.direccion : EVENTO.fiesta.direccion}
+      </p>
+    </div>
+  );
+}
+
 function Programa() {
   return (
     <section id="lugares" className="flex scroll-mt-24 flex-col gap-3" aria-label="Programa">
@@ -626,6 +675,7 @@ function Programa() {
           mapa={EVENTO.fiesta.mapa}
         />
       </div>
+      <Mapa />
       <a
         href={enlaceCalendario()}
         target="_blank"

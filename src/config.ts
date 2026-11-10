@@ -36,5 +36,5 @@ export const EVENTO = {
   whatsapp: '',
 
   // Imagen que aparece al compartir el enlace (WhatsApp, redes)
-  imagenCompartir: '/hero.webp',
+  imagenCompartir: '/og.jpg',
 };
